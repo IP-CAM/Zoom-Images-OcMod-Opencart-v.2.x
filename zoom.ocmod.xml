@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <modification>
-  <name>Zoom na imagem com hover e touch no opencart (2.3.0.2)</name>
+  <name>Zoom na imagem</name>
   <code>image-zoom-css</code>
   <version>1.0</version>
   <author>Lucas Leal</author>
-  <link>https://lucasleal.dev</link>
+  <link>http://www.facebook.com/pagina404</link>
   <file path="catalog/view/theme/*/template/common/footer.tpl">
     <operation>
       <search>
@@ -13,9 +13,6 @@
       <add position="before">
         <![CDATA[
         <script type="text/javascript">
-          $(document).ready(function(){
-            $('.thumbnails').off('click');
-          });
           (function($){
 
             $.event.special.doubletap = {
@@ -45,69 +42,75 @@
             };
 
           })(jQuery);
-          function imgZoom(){
-            if($('.thumbnails > li:first-child > a').length==0) return;
-            $('.thumbnails > li:first-child > a > div').remove();
-            $('.thumbnails > li:first-child > a').click(function(e){e.preventDefault ? e.preventDefault() : e.returnValue = false;});
-            $('.thumbnails > li:first-child > a').removeAttr('alt title').prepend('<div></div>');
-            var img = $('.thumbnails > li:first-child > a img');
-            var fullImage = img.attr('src');
-            fullImage = fullImage.replace('cache/catalog/','catalog/');
-            fullImage = fullImage.replace(/(\-[0-9]+x[0-9]+)/gm,'');
-            img.removeAttr('alt title');
-            var div = $('.thumbnails > li:first-child > a > div');
-            div.css('background-image',`url('${fullImage}')`);
-            div.on('mousemove touchmove touchstart',function(evt){
-                // $('body').addClass('aprendeuzoom');
-                // evt.preventDefault ? evt.preventDefault() : evt.returnValue = false;
-                var touchstart = evt.type === 'touchstart' || evt.type === 'touchmove',
-                        evt = touchstart ? evt.originalEvent : evt,
-                        pageX = touchstart ? evt.targetTouches[0].pageX : evt.pageX,
-                        pageY = touchstart ? evt.targetTouches[0].pageY : evt.pageY;
-                var x = pageX - $(this).offset().left;
-                var y = pageY - $(this).offset().top;
-                x = /*Math.round(*/(100*x)/$(this).outerWidth()/*)*/;
-                y = /*Math.round(*/(100*y)/$(this).outerHeight()/*)*/;
-                //console.log(x,y);
-                if(x<0)x=0;
-                if(x>100)x=100;
-                if(y<0)y=0;
-                if(y>100)y=100;
-                $(this).css('background-position',''+x+'% '+y+'%');
-            });
-            $('.thumbnails > li:first-child').off('doubletap');
-            $('.thumbnails > li:first-child').on('doubletap',function(evt){
-              $(this).closest('.thumbnails').toggleClass('mobilezoom');
-            });
-          }
-          imgZoom();
-          $('#product input, #product select').on('change click',function(){
-            imgZoom();
-            if($('body').outerWidth()<768)$("ul.thumbnails").get(0).scrollIntoView();
-          });
-          $('ul.thumbnails').on('click','li.image-additional a',function(e){
-            e.preventDefault ? e.preventDefault() : e.returnValue = false;
-            $('.thumbnails > li:first-child > a').attr('href',$(this).attr('href'));
-            $('.thumbnails > li:first-child > a img').attr('src',$(this).attr('href'));
-            imgZoom();
-          });
-          preload = function(url){
-              var load = $(`<div style="display:none;background-image:url('${url}');"></div>`);
-              $('body').append(load);
-              setTimeout(function(){
-                  load.remove();
-              },300);
-          }
-          $('.radio img').each(function(){
-            var fullImage = $(this).attr('src');
-            fullImage = fullImage.replace('cache/catalog/','catalog/');
-            fullImage = fullImage.replace(/(\-[0-9]+x[0-9]+)/gm,'');
-            preload(fullImage);
+          (function(){
+            if($('#product').length<1) return;
+            $(document).ready(function(){
+              $('.thumbnails').off('click');
+              function imgZoom(){
+                if($('.thumbnails > li:first-child > a').length==0) return;
+                $('.thumbnails > li:first-child > a > div').remove();
+                $('.thumbnails > li:first-child > a').click(function(e){e.preventDefault ? e.preventDefault() : e.returnValue = false;});
+                $('.thumbnails > li:first-child > a').removeAttr('alt title').prepend('<div></div>');
+                var img = $('.thumbnails > li:first-child > a img');
+                var fullImage = img.attr('src');
+                fullImage = fullImage.replace('cache/catalog/','catalog/');
+                fullImage = fullImage.replace(/(\-[0-9]+x[0-9]+)/gm,'');
+                img.removeAttr('alt title');
+                var div = $('.thumbnails > li:first-child > a > div');
+                div.css('background-image',`url('${fullImage}')`);
+                div.on('mousemove touchmove touchstart',function(evt){
+                    // $('body').addClass('aprendeuzoom');
+                    // evt.preventDefault ? evt.preventDefault() : evt.returnValue = false;
+                    var touchstart = evt.type === 'touchstart' || evt.type === 'touchmove',
+                            evt = touchstart ? evt.originalEvent : evt,
+                            pageX = touchstart ? evt.targetTouches[0].pageX : evt.pageX,
+                            pageY = touchstart ? evt.targetTouches[0].pageY : evt.pageY;
+                    var x = pageX - $(this).offset().left;
+                    var y = pageY - $(this).offset().top;
+                    x = /*Math.round(*/(100*x)/$(this).outerWidth()/*)*/;
+                    y = /*Math.round(*/(100*y)/$(this).outerHeight()/*)*/;
+                    //console.log(x,y);
+                    if(x<0)x=0;
+                    if(x>100)x=100;
+                    if(y<0)y=0;
+                    if(y>100)y=100;
+                    $(this).css('background-position',''+x+'% '+y+'%');
+                });
+                $('.thumbnails > li:first-child').off('doubletap');
+                $('.thumbnails > li:first-child').on('doubletap',function(evt){
+                  $(this).closest('.thumbnails').toggleClass('mobilezoom');
+                });
+              }
+              imgZoom();
+              $('#product input, #product select').on('change click',function(){
+                imgZoom();
+                if($('body').outerWidth()<768)$("ul.thumbnails").get(0).scrollIntoView();
+              });
+              $('ul.thumbnails').on('click','li.image-additional a',function(e){
+                e.preventDefault ? e.preventDefault() : e.returnValue = false;
+                $('.thumbnails > li:first-child > a').attr('href',$(this).attr('href'));
+                $('.thumbnails > li:first-child > a img').attr('src',$(this).attr('href'));
+                imgZoom();
+              });
+              preload = function(url){
+                  var load = $(`<div style="display:none;background-image:url('${url}');"></div>`);
+                  $('body').append(load);
+                  setTimeout(function(){
+                      load.remove();
+                  },300);
+              }
+              $('.radio img').each(function(){
+                var fullImage = $(this).attr('src');
+                fullImage = fullImage.replace('cache/catalog/','catalog/');
+                fullImage = fullImage.replace(/(\-[0-9]+x[0-9]+)/gm,'');
+                preload(fullImage);
 
-            var biggerImage = $(this).attr('src');
-            biggerImage = biggerImage.replace('-50x50','-494x494');
-            preload(biggerImage);
-          });
+                var biggerImage = $(this).attr('src');
+                biggerImage = biggerImage.replace('-50x50','-494x494');
+                preload(biggerImage);
+              });
+            });
+          })();
         </script>
         <style type="text/css">
           .thumbnails > li:first-child > a{position: relative;touch-action: none;}
